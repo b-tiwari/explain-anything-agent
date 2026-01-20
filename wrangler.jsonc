@@ -1,0 +1,36 @@
+{
+  "name": "explain-anything-mcp",
+  "main": "src/wrangler_worker/index.ts",
+  "compatibility_date": "2024-12-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "minify": true,
+
+//   "logpush": false,
+
+//   "vars": {
+//     "NODE_ENV": "production"
+//   },
+
+  // Environment variables (for development - use Cloudflare dashboard for production)
+  "vars": {
+    "NODE_ENV": "development"
+  },
+  
+  // For secrets like API keys, use `wrangler secret put OPENAI_API_KEY` command
+  // or set them in the Cloudflare dashboard
+
+//   "routes": [],
+
+//   "kv_namespaces": [],
+
+//   "durable_objects": {
+//     "bindings": []
+//   },
+
+//   "migrations": [],
+
+//   "build": {
+//     "command": "npm run build"
+//   }
+}

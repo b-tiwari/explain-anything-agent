@@ -1,6 +1,7 @@
 import type { GraphNode } from '@langchain/langgraph';
+import { getLLM } from '@/src/agent/llm';
 import { TopicVisualLayoutsEnum, type TTopicUnit } from '@/src/contracts/topicTypes';
-import { llm } from '../../llm';
+import { extractTextFromAIMessage } from '../../utils';
 import type { TopicGraphStateSchema } from '../state';
 
 //"../../../shared/topicTypes";
@@ -36,7 +37,9 @@ const getPromptForTopicTitle = (topic: string, title: string) => {
  * @name generateUnit
  */
 const generateUnitNode: GraphNode<typeof TopicGraphStateSchema.State> = async (state) => {
-	if (!state.currentIndex || !state.topic) return {};
+	if (state.currentIndex == null || !state.topic) return {};
+
+	const llm = getLLM();
 
 	const currentIndex = state.currentIndex as number;
 	const topic = state.topic as string;
@@ -45,10 +48,14 @@ const generateUnitNode: GraphNode<typeof TopicGraphStateSchema.State> = async (s
 	const prompt = getPromptForTopicTitle(topic, title);
 
 	const response = await llm.invoke(prompt);
-	const unit = JSON.parse(response.content as string);
+	const rawText = extractTextFromAIMessage(response);
+
+	const unit = JSON.parse(rawText) as TTopicUnit;
 
 	return {
-		units: [...state.units, unit] as TTopicUnit[],
+		// units: [...state.units, unit] as TTopicUnit[],
+		// RETURN DELTA ONLY — reducer will append
+		units: unit,
 		currentIndex: currentIndex + 1,
 	};
 };
