@@ -2,16 +2,6 @@ import { ReducedValue, StateSchema } from '@langchain/langgraph';
 import * as z from 'zod';
 import type { TTopicUnit } from '@/src/contracts/topicTypes';
 
-const reducerForArrVals = <T>(itemSchema: z.ZodType<T>) => {
-	return new ReducedValue(
-		z.array(itemSchema).default(() => []),
-		{
-			inputSchema: itemSchema,
-			reducer: (current: T[], next: T) => [...current, next],
-		},
-	);
-};
-
 export const TopicGraphStateSchema = new StateSchema({
 	topic: z.string(),
 	maxUnits: z.number(),
@@ -26,6 +16,6 @@ export const TopicGraphStateSchema = new StateSchema({
 	),
 	// Add a key to the state. We will set this key to determine
 	// how we branch.
-	which: z.string(),
+	// which: z.string(),
 	// units: reducerForArrVals(z.custom<TTopicUnit>()),
 });

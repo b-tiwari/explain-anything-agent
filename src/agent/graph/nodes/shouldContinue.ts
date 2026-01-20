@@ -1,16 +1,9 @@
-import { type ConditionalEdgeRouter, END } from '@langchain/langgraph';
-import z from 'zod';
+import { END } from '@langchain/langgraph';
 import type { TopicGraphStateSchema } from '../state';
 
-// export function shoulduContinue(state: TopicGraphState): 'generateUnit' | 'end' {
-// 	return state.currentIndex < state.plannedTitles.length ? 'generateUnit' : 'end';
-// }
+export const shouldContinue = (state: typeof TopicGraphStateSchema.State) => {
+	const currentIndex = state.currentIndex ?? 0;
+	const total = state.plannedTitles.length;
 
-type TConditionalEdgeRouter = (state: typeof TopicGraphStateSchema.State) => string;
-
-export const shouldContinue: TConditionalEdgeRouter = (state) => {
-	// export const shouldContinue: 'generateUnit' | 'end' = (state: typeof TopicGraphStateSchema) => {
-	if (!state.currentIndex) return END;
-	const currentIndex = state.currentIndex as number;
-	return currentIndex < state.plannedTitles.length ? 'generateUnit' : 'end'; // END;
+	return currentIndex < total ? 'generateUnit' : END;
 };
