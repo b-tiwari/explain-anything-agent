@@ -1,10 +1,12 @@
-import type { GraphNode } from '@langchain/langgraph';
+// import type { GraphNode } from '@langchain/langgraph';
 import { getLLM } from '@/src/agent/llm';
 import type { TTopicUnit } from '@/src/contracts/topicTypes';
 import { extractTextFromAIMessage } from '../../utils';
 import type { TopicGraphStateSchema } from '../state';
 
-const planUnitsNode: GraphNode<typeof TopicGraphStateSchema.State> = async (state) => {
+// const planUnitsNode: GraphNode<typeof TopicGraphStateSchema.State> = async (state) => {
+
+const planUnitsNode = async (state: typeof TopicGraphStateSchema.State) => {
 	const prompt = `
 You are breaking down the topic "${state.topic}".
 Generate ${state.maxUnits} concise learning unit titles.

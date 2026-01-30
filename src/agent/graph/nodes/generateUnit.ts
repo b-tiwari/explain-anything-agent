@@ -1,4 +1,4 @@
-import type { GraphNode } from '@langchain/langgraph';
+// import type { GraphNode } from '@langchain/langgraph';
 import { getLLM } from '@/src/agent/llm';
 import { TopicVisualLayoutsEnum, type TTopicUnit } from '@/src/contracts/topicTypes';
 import { extractTextFromAIMessage } from '../../utils';
@@ -36,7 +36,8 @@ const getPromptForTopicTitle = (topic: string, title: string) => {
 /**
  * @name generateUnit
  */
-const generateUnitNode: GraphNode<typeof TopicGraphStateSchema.State> = async (state) => {
+// const generateUnitNode: GraphNode<typeof TopicGraphStateSchema.State> = async (state) => {
+const generateUnitNode = async (state: typeof TopicGraphStateSchema.State) => {
 	if (state.currentIndex == null || !state.topic) return {};
 
 	const llm = getLLM();

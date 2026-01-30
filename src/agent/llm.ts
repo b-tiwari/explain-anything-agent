@@ -2,7 +2,9 @@ import { ChatOpenAI } from '@langchain/openai';
 
 let mLLM: ChatOpenAI | null = null;
 
-export function initLLM(apiKey: string) {
+const OPENAI_API_KEY = '<<this value would be obtained from env file locally>>';
+
+export function initLLM(apiKey: string = OPENAI_API_KEY) {
 	if (mLLM) return mLLM;
 
 	mLLM = new ChatOpenAI({

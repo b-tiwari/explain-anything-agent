@@ -20,7 +20,7 @@ jspm_packages/
 # Optional npm cache directory
 .npm
 
-
+.wrangler/
 # dotenv environment variable files
 .env
 .env.*

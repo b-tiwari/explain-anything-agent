@@ -10,12 +10,18 @@ import { initLLM } from '../agent/llm';
 // 		return transport.handleRequest(request, mcpServer);
 // 	},
 // };
+const mdlName = '[CLOUDFLARE WRANGLER Worker]';
+
+const OPENAI_API_KEY = '<<this value would be obtained from env file locally>>';
 
 export default {
 	async fetch(request: Request, env: Env, contxt: ExecutionContext) {
+		const fnName = `${mdlName}-[fetch]`;
 		const accept = request.headers.get('accept') ?? '';
-		initLLM(env.OPENAI_API_KEY);
+		// initLLM(env.OPENAI_API_KEY);
+		initLLM(OPENAI_API_KEY);
 
+		console.log(`${fnName} LLM initialized with key:`, env.OPENAI_API_KEY ? 'YES' : 'NO');
 		if (request.method !== 'POST') {
 			return new Response(
 				JSON.stringify({
@@ -45,6 +51,7 @@ export default {
 
 		// Connect mcpServer to transport - this handles all the message wiring
 		await mcpServer.connect(transport);
+		console.log(`${fnName} MCP connected for WebStandardStreamableHTTPServerTransport`);
 
 		return transport.handleRequest(request);
 	},

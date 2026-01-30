@@ -1,5 +1,5 @@
 import type { TextContent } from '@modelcontextprotocol/sdk/types.js';
-import z from 'zod';
+import * as z from 'zod';
 import buildTopicGraph from '@/src/agent/graph/';
 import { TopicEventsEnum } from '@/src/contracts/enums/contractEnums';
 import type {
@@ -17,6 +17,7 @@ const toolInputSchema = z.object({
 	maxUnits: z.number().optional().default(7),
 });
 
+const mdlName = '[MCP ExplainTpoic Tool]';
 /**
  * @name textContentSchema
  */
@@ -78,23 +79,35 @@ export type MCPToolExplainTopicInput = z.infer<typeof toolInputSchema>;
 const { PLAN_STARTED, PLAN_COMPLETED, UNIT_CREATED, UNIT_UPDATED } = TopicEventsEnum;
 
 const toolHandler = async (toolInput: MCPToolExplainTopicInput, { signal, stream }: TMCPToolContext) => {
+	const fnName = `${mdlName}-[toolHandler]`;
+
 	const { topic, maxUnits } = toolInput;
 
+	console.log(`${fnName} Data From Inputs`, { topic, maxUnits });
+
 	sendMCPHttpStreamEvent(stream, PLAN_STARTED, { topic, maxUnits } satisfies TTopicPlanStartedPayload);
+
+	console.log(`${fnName} sendMCPHttpStreamEvent called`, { topic, maxUnits });
 
 	// build langGraph, get its stream and send that stream over MCPTool's stream
 
 	const graph = buildTopicGraph();
 	const units: { title: string; summary: string }[] = [];
+	console.log(`${fnName} Graph and Units initialized`);
 	const graphStream = await graph.stream({ topic, maxUnits, currentIndex: 0 }, { signal });
 
+	console.log(`${fnName} Graph streaming, stream received`);
+
 	for await (const update of graphStream) {
+		console.log(`${fnName} Interating over GraphStream updates`);
 		const generateUnitUpdate = update?.generateUnit;
 		if (generateUnitUpdate?.units && typeof generateUnitUpdate?.currentIndex === 'number') {
 			const unit = generateUnitUpdate.units[generateUnitUpdate.currentIndex];
 			const { title, summary } = unit;
 			units.push({ title, summary });
+			console.log(`${fnName} units data prepared`);
 			sendMCPHttpStreamEvent(stream, UNIT_CREATED, { unit, index: generateUnitUpdate.currentIndex });
+			console.log(`${fnName} units data Event stream sent`);
 		}
 	}
 

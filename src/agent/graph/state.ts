@@ -7,13 +7,18 @@ export const TopicGraphStateSchema = new StateSchema({
 	maxUnits: z.number(),
 	plannedTitles: new ReducedValue(
 		z.array(z.string()).default(() => []),
-		{ reducer: (x, y) => x.concat(y) }, // both x and y are arrays
+		  {
+				inputSchema: z.array(z.string()),
+				reducer: (current, next) => next,
+		 } // both x and y are arrays
 	),
 	currentIndex: z.number(),
 	units: new ReducedValue(
 		z.array(z.custom<TTopicUnit>()).default(() => []),
-		{ reducer: (x, y) => x.concat(y) }, // both x and y are arrays
-	),
+			{
+				inputSchema: z.array(z.custom<TTopicUnit>()),
+				reducer: (current, next) => current.concat(next),
+			}
 	// Add a key to the state. We will set this key to determine
 	// how we branch.
 	// which: z.string(),
